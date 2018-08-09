@@ -9,9 +9,9 @@
     function assertEq(msg, got, expected) {
         output.innerHTML += `Testing ${msg}: `;
         if (got !== expected)
-            output.innerHTML += `<font color="red">FAIL!</font><br>Got: ${got}<br>Expected: ${expected}<br>`;
+            output.innerHTML += `FAIL!<br>Got: ${got}<br>Expected: ${expected}<br>`;
         else
-            output.innerHTML += `<font color="green">SUCCESS!</font> Got: ${got}<br>`;
+            output.innerHTML += `SUCCESS! Got: ${got}<br>`;
     }
 
     assertEq("WebAssembly.Global exists", typeof WebAssembly.Global, "function");
