@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head><meta charset="utf8"></head>
+<body>
+<div id='output'></div>
+<script>
+    const output = document.getElementById('output');
+
+    function assertEq(got, expected) {
+        if (got !== expected)
+            output.innerHTML += `FAIL!<br>Got: ${got}<br>Expected: ${expected}`;
+        else
+            output.innerHTML += `SUCCESS! Got: ${got}<br>`;
+    }
+
+    const global = new WebAssembly.Global({value:'i32', mutable:true}, 0);
+    WebAssembly.instantiateStreaming(fetch('test.wasm'), { js: { global } })
+    .then(({instance}) => {
+        assertEq(global.value, 0);
+        assertEq(instance.exports.getGlobal(), 0);
+        global.value = 42;
+        assertEq(instance.exports.getGlobal(), 42);
+        instance.exports.incGlobal();
+        assertEq(global.value, 43);
+    });
+</script>
+</body>
