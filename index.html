@@ -6,22 +6,24 @@
 <script>
     const output = document.getElementById('output');
 
-    function assertEq(got, expected) {
+    function assertEq(msg, got, expected) {
+        output.innerHTML += `Testing ${msg}: `;
         if (got !== expected)
-            output.innerHTML += `FAIL!<br>Got: ${got}<br>Expected: ${expected}`;
+            output.innerHTML += `<font color="red">FAIL!</font><br>Got: ${got}<br>Expected: ${expected}<br>`;
         else
-            output.innerHTML += `SUCCESS! Got: ${got}<br>`;
+            output.innerHTML += `<font color="green">SUCCESS!</font> Got: ${got}<br>`;
     }
+
+    assertEq("WebAssembly.Global exists", typeof WebAssembly.Global, "function");
 
     const global = new WebAssembly.Global({value:'i32', mutable:true}, 0);
     WebAssembly.instantiateStreaming(fetch('test.wasm'), { js: { global } })
     .then(({instance}) => {
-        assertEq(global.value, 0);
-        assertEq(instance.exports.getGlobal(), 0);
+        assertEq("getting initial value from wasm", instance.exports.getGlobal(), 0);
         global.value = 42;
-        assertEq(instance.exports.getGlobal(), 42);
+        assertEq("getting JS-updated value from wasm", instance.exports.getGlobal(), 42);
         instance.exports.incGlobal();
-        assertEq(global.value, 43);
+        assertEq("getting wasm-updated value from JS", global.value, 43);
     });
 </script>
 </body>
